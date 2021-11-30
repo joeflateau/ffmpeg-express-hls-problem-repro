@@ -18,15 +18,24 @@ async function main() {
         name: "shouldUsePassthrough",
         message: "Pipeline?",
         choices: [
-          { value: false, name: "Only use pipe/pipeline (should throw)" },
+          {
+            value: false,
+            name: "Only use pipe/pipeline (will probably throw)",
+          },
           ,
           {
             value: true,
-            name: "Use on('data')/on('end')/on('error') (should not throw)",
+            name: "Use on('data')/on('end')/on('error') events (will probably not throw)",
           },
         ],
       },
     ]);
+
+  console.log(shouldUsePassthrough ? `using events` : `using pipe/pipeline`);
+
+  console.log(
+    "uploads will happen every 8 seconds or so, wait a minute or two to see if errors occur"
+  );
 
   app.route("/upload/:filePath(*)").post(async (req, res) => {
     const tempFile = joinPath(tmpdir(), parse(req.url).name);
@@ -65,7 +74,7 @@ async function main() {
       ["-method", "POST"],
       [`http://localhost:9025/upload/v%v/stream.m3u8`],
     ].flat(),
-    { stdio: "inherit" }
+    { stdio: "ignore" }
   );
 }
 
